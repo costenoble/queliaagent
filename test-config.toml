@@ -1,0 +1,36 @@
+# Configuration de test Agentquelia
+
+[agent]
+instance_id = "test-poi-001"
+polling_interval_secs = 10  # Toutes les 10 secondes pour le test
+
+[poi]
+# Clé POI pour "testagent"
+api_key = "${AGENTQUELIA_POI_KEY}"  # Set via environment variable
+
+[supabase]
+url = "https://msqisigttxosvnxfhfdn.supabase.co"
+# Remplace par ta vraie clé Supabase si différente
+anon_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zcWlzaWd0dHhvc3ZueGZoZmRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MTM2NDYsImV4cCI6MjA4NDM4OTY0Nn0.Idzca71FzW4SVlKlqHOsbh3JvMfzYH-jpCJP22rzSQ8"
+rpc_endpoint = "/rest/v1/rpc/insert_live_data"
+
+[source]
+type = "csv"
+
+[source.csv]
+path = "/Users/costenobleryan/Desktop/agentquelia/test-data.csv"
+value_field = "power_kw"
+unit = "MW"
+read_last_row = true  # Lit la dernière ligne (123.7)
+
+[logging]
+level = "debug"  # Plus de détails pour le test
+console_output = true
+rotation = "never"
+
+[update]
+enabled = false  # Désactivé pour le test
+
+[retry]
+max_attempts = 3
+initial_delay_ms = 1000

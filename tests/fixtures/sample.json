@@ -1,0 +1,16 @@
+{
+  "timestamp": "2024-01-01T10:00:00Z",
+  "meters": [
+    {
+      "id": "meter-001",
+      "power_kw": 125.5,
+      "status": "ok"
+    },
+    {
+      "id": "meter-002",
+      "power_kw": 87.3,
+      "status": "ok"
+    }
+  ],
+  "total_power_mw": 0.2128
+}

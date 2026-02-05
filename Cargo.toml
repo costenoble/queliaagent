@@ -1,0 +1,83 @@
+[package]
+name = "agentquelia"
+version = "0.1.0"
+edition = "2021"
+authors = ["Agentquelia Team"]
+description = "Cross-platform power data collection agent"
+license = "MIT"
+rust-version = "1.70"
+
+[dependencies]
+# Async runtime
+tokio = { version = "1.35", features = ["full", "rt-multi-thread", "time", "fs", "signal"] }
+
+# HTTP client (use 0.11 for broader compatibility)
+reqwest = { version = "0.11", features = ["json", "rustls-tls"], default-features = false }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.8"
+
+# CSV parsing
+csv = "1.3"
+
+# JSONPath for extracting values
+jsonpath-rust = "0.5"
+
+# CLI argument parsing
+clap = { version = "4.4", features = ["derive", "env"] }
+
+# Logging and tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+tracing-appender = "0.2"
+
+# Error handling
+thiserror = "1.0"
+anyhow = "1.0"
+
+# Retry with exponential backoff
+backoff = { version = "0.4", features = ["tokio"] }
+
+# Date/time (pin to avoid time-macros edition 2024)
+chrono = { version = "0.4.31", default-features = false, features = ["std", "clock", "serde"] }
+
+# UUID for request correlation
+uuid = { version = "1.6", features = ["v4"] }
+
+# Directory paths
+dirs = "5.0"
+
+# Async trait
+async-trait = "0.1"
+
+# SHA256 for update verification
+sha2 = "0.10"
+
+# Semver for version comparison
+semver = "1.0"
+
+# Self-replacement for updates
+self-replace = "1.3"
+
+# Regex for env var expansion
+regex-lite = "0.1"
+
+[target.'cfg(windows)'.dependencies]
+windows-service = "0.6"
+
+[dev-dependencies]
+tokio-test = "0.4"
+tempfile = "3.9"
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[[bin]]
+name = "agentquelia"
+path = "src/main.rs"

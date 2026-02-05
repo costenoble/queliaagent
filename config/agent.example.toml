@@ -1,0 +1,165 @@
+# Agentquelia Configuration
+# ========================
+# Copy this file to your config directory and rename to agent.toml
+#
+# Config locations:
+#   macOS: ~/Library/Application Support/agentquelia/agent.toml
+#   Windows: %APPDATA%\agentquelia\agent.toml
+#
+# Environment variables can be used with ${VAR_NAME} syntax
+
+[agent]
+# Unique identifier for this POI
+instance_id = "poi-001"
+
+# How often to read and send data (in seconds)
+polling_interval_secs = 60
+
+# Enable verbose logging
+verbose = false
+
+[poi]
+# POI API key (use environment variable for security)
+# Set AGENTQUELIA_POI_KEY environment variable
+api_key = "${AGENTQUELIA_POI_KEY}"
+
+[supabase]
+# Supabase project URL
+url = "https://msqisigttxosvnxfhfdn.supabase.co"
+
+# Supabase anonymous key (use environment variable for security)
+# Set SUPABASE_ANON_KEY environment variable
+anon_key = "${SUPABASE_ANON_KEY}"
+
+# RPC endpoint path (usually no need to change)
+rpc_endpoint = "/rest/v1/rpc/insert_live_data"
+
+# Request timeout in seconds
+timeout_secs = 30
+
+# ============================================
+# DATA SOURCE CONFIGURATION
+# ============================================
+# Choose ONE source type: "csv", "json", or "http"
+
+[source]
+type = "csv"  # Change to "json" or "http" as needed
+
+# --------------------------------------------
+# CSV SOURCE (when type = "csv")
+# --------------------------------------------
+[source.csv]
+# Path to the CSV file
+path = "/var/data/power_readings.csv"
+
+# Column name containing the power value
+# Can also be a column index (0-based)
+value_field = "power_kw"
+
+# Unit of measurement (kW, MW, etc.)
+unit = "kW"
+
+# Read only the last row (most recent reading)
+read_last_row = true
+
+# CSV delimiter
+delimiter = ","
+
+# Number of header rows to skip (after the column names)
+skip_headers = 0
+
+# --------------------------------------------
+# JSON SOURCE (when type = "json")
+# Uncomment and configure if using JSON
+# --------------------------------------------
+# [source.json]
+# Path to the JSON file
+# path = "/var/data/readings.json"
+#
+# JSONPath expression to extract the value
+# Examples:
+#   $.power            - Simple field
+#   $.meters[0].value  - Nested array
+#   $.data.current.kw  - Nested objects
+# json_path = "$.power"
+#
+# Unit of measurement
+# unit = "kW"
+
+# --------------------------------------------
+# HTTP SOURCE (when type = "http")
+# Uncomment and configure if using HTTP API
+# --------------------------------------------
+# [source.http]
+# Local or internal API URL
+# url = "http://192.168.1.100:8080/api/meter/reading"
+#
+# HTTP method (GET or POST)
+# method = "GET"
+#
+# JSONPath expression to extract value from response
+# json_path = "$.data.power"
+#
+# Unit of measurement
+# unit = "kW"
+#
+# Request timeout in seconds
+# timeout_secs = 10
+#
+# Optional: Custom headers
+# [source.http.headers]
+# Authorization = "Bearer your_token_here"
+# Accept = "application/json"
+
+# ============================================
+# LOGGING CONFIGURATION
+# ============================================
+[logging]
+# Log level: trace, debug, info, warn, error
+level = "info"
+
+# Log directory (leave empty for default)
+# macOS default: ~/Library/Logs/agentquelia/
+# Windows default: %LOCALAPPDATA%\agentquelia\logs\
+# directory = ""
+
+# Output logs to console as well as file
+console_output = true
+
+# Log rotation: daily, hourly, or never
+rotation = "daily"
+
+# Maximum number of log files to keep
+max_files = 7
+
+# ============================================
+# AUTO-UPDATE CONFIGURATION
+# ============================================
+[update]
+# Enable automatic updates
+enabled = true
+
+# How often to check for updates (in hours)
+check_interval_hours = 24
+
+# Update manifest URL (Supabase Storage)
+update_url = "https://msqisigttxosvnxfhfdn.supabase.co/storage/v1/object/public/releases/latest.json"
+
+# Update channel: stable, beta, or alpha
+channel = "stable"
+
+# ============================================
+# RETRY CONFIGURATION
+# ============================================
+[retry]
+# Maximum number of retry attempts
+max_attempts = 5
+
+# Initial delay between retries (milliseconds)
+initial_delay_ms = 1000
+
+# Maximum delay between retries (milliseconds)
+max_delay_ms = 60000
+
+# Backoff multiplier
+multiplier = 2.0

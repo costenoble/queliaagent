@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentquelia - Générateur d'installation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .logo h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .logo p {
+            color: #888;
+            font-size: 1.1rem;
+        }
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .form-group {
+            margin-bottom: 24px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #00d4ff;
+            font-weight: 500;
+        }
+        input, select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+        input::placeholder {
+            color: #666;
+        }
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(90deg, #00d4ff, #00ff88);
+            color: #1a1a2e;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,212,255,0.3);
+        }
+        .result {
+            margin-top: 30px;
+            display: none;
+        }
+        .result.show {
+            display: block;
+        }
+        .result-title {
+            color: #00ff88;
+            margin-bottom: 16px;
+            font-size: 1.2rem;
+        }
+        .command-box {
+            background: #0d1117;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            position: relative;
+            border: 1px solid #30363d;
+        }
+        .command-box code {
+            color: #00ff88;
+            word-break: break-all;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 8px 16px;
+            background: #238636;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .copy-btn:hover {
+            background: #2ea043;
+        }
+        .copy-btn.copied {
+            background: #00d4ff;
+        }
+        .help-text {
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 6px;
+        }
+        .divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 24px 0;
+        }
+        .mode-tabs {
+            display: flex;
+            margin-bottom: 24px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 4px;
+        }
+        .mode-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .mode-tab.active {
+            background: linear-gradient(90deg, #00d4ff, #00ff88);
+            color: #1a1a2e;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>Agentquelia</h1>
+            <p>Générateur de commande d'installation</p>
+        </div>
+
+        <div class="card">
+            <div class="mode-tabs">
+                <div class="mode-tab active" onclick="setMode('interactive')">Mode Interactif</div>
+                <div class="mode-tab" onclick="setMode('auto')">Mode Automatique</div>
+            </div>
+
+            <div id="interactive-mode">
+                <div class="form-group">
+                    <label>Clé POI *</label>
+                    <input type="text" id="poi-key" placeholder="sk_live_xxxxxxxxxxxxxxxx">
+                    <p class="help-text">Clé unique pour ce point de mesure</p>
+                </div>
+
+                <button class="btn" onclick="generateInteractive()">Générer la commande</button>
+            </div>
+
+            <div id="auto-mode" style="display: none;">
+                <div class="form-group">
+                    <label>Clé POI *</label>
+                    <input type="text" id="poi-key-auto" placeholder="sk_live_xxxxxxxxxxxxxxxx">
+                </div>
+
+                <div class="form-group">
+                    <label>Chemin du fichier de données *</label>
+                    <input type="text" id="data-path" placeholder="/var/data/power.csv">
+                </div>
+
+                <div class="form-group">
+                    <label>Colonne / JSONPath</label>
+                    <input type="text" id="value-field" placeholder="power_kw">
+                    <p class="help-text">Nom de colonne CSV ou JSONPath (ex: $.power)</p>
+                </div>
+
+                <div class="form-group">
+                    <label>Unité</label>
+                    <input type="text" id="unit" placeholder="kW" value="kW">
+                </div>
+
+                <div class="form-group">
+                    <label>Multiplicateur (conversion)</label>
+                    <input type="text" id="multiplier" placeholder="1" value="1">
+                    <p class="help-text">1 = pas de conversion, 0.001 = kW→MW</p>
+                </div>
+
+                <div class="form-group">
+                    <label>Intervalle (secondes)</label>
+                    <input type="number" id="interval" placeholder="60" value="60">
+                </div>
+
+                <button class="btn" onclick="generateAuto()">Générer la commande</button>
+            </div>
+
+            <div class="result" id="result">
+                <div class="divider"></div>
+                <h3 class="result-title">📋 Commande d'installation</h3>
+                <p style="color: #888; margin-bottom: 16px;">Exécutez cette commande sur le serveur cible :</p>
+                <div class="command-box">
+                    <button class="copy-btn" onclick="copyCommand()">Copier</button>
+                    <code id="command-output"></code>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = 'https://msqisigttxosvnxfhfdn.supabase.co/storage/v1/object/public/releases';
+
+        function setMode(mode) {
+            document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('interactive-mode').style.display = mode === 'interactive' ? 'block' : 'none';
+            document.getElementById('auto-mode').style.display = mode === 'auto' ? 'block' : 'none';
+            document.getElementById('result').classList.remove('show');
+        }
+
+        function generateInteractive() {
+            const poiKey = document.getElementById('poi-key').value.trim();
+
+            if (!poiKey) {
+                alert('Veuillez entrer la clé POI');
+                return;
+            }
+
+            const command = `curl -sSL "${BASE_URL}/install.sh" | POI_KEY="${poiKey}" bash`;
+            showResult(command);
+        }
+
+        function generateAuto() {
+            const poiKey = document.getElementById('poi-key-auto').value.trim();
+            const dataPath = document.getElementById('data-path').value.trim();
+            const valueField = document.getElementById('value-field').value.trim();
+            const unit = document.getElementById('unit').value.trim() || 'kW';
+            const multiplier = document.getElementById('multiplier').value.trim() || '1';
+            const interval = document.getElementById('interval').value.trim() || '60';
+
+            if (!poiKey || !dataPath) {
+                alert('Veuillez remplir les champs obligatoires');
+                return;
+            }
+
+            let command = `curl -sSL "${BASE_URL}/install.sh" | bash -s -- \\
+  --key "${poiKey}" \\
+  --path "${dataPath}" \\
+  --field "${valueField || 'power_kw'}" \\
+  --unit "${unit}" \\
+  --multiplier "${multiplier}" \\
+  --interval "${interval}" \\
+  --yes`;
+
+            showResult(command);
+        }
+
+        function showResult(command) {
+            document.getElementById('command-output').textContent = command;
+            document.getElementById('result').classList.add('show');
+        }
+
+        function copyCommand() {
+            const command = document.getElementById('command-output').textContent;
+            navigator.clipboard.writeText(command).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = 'Copié !';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Copier';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
