@@ -121,16 +121,19 @@ jobs:
           for file in artifacts/*/*; do
             filename=$(basename "$file")
             echo "Uploading $filename..."
-            curl -X POST \
+            # Use upsert to overwrite existing files
+            curl -X PUT \
               "${SUPABASE_URL}/storage/v1/object/releases/${filename}" \
               -H "Authorization: Bearer ${SUPABASE_SERVICE_KEY}" \
               -H "Content-Type: application/octet-stream" \
+              -H "x-upsert: true" \
               --data-binary @"$file"
           done
 
-          # Upload install script
-          curl -X POST \
+          # Upload install script (with upsert)
+          curl -X PUT \
             "${SUPABASE_URL}/storage/v1/object/releases/install.sh" \
             -H "Authorization: Bearer ${SUPABASE_SERVICE_KEY}" \
             -H "Content-Type: text/plain" \
+            -H "x-upsert: true" \
             --data-binary @releases/install.sh
